@@ -9,13 +9,17 @@ import java.util.Scanner;
 
 import billywangwang.main.entity.Entity;
 import billywangwang.main.entity.Player;
+import billywangwang.main.tile.TileConstants;
 import billywangwang.main.tiles.GrassTile;
 import billywangwang.main.tiles.Tile;
+import billywangwang.main.tiles.WaterTile;
 
 public abstract class Level {
 	
 	protected LinkedList<Entity> entities = new LinkedList<Entity>();
 	protected LinkedList<Tile> tiles = new LinkedList<Tile>();
+	
+	protected double camX, camY;
 	
 	public Level(String path){
 		try{
@@ -29,6 +33,17 @@ public abstract class Level {
 	
 	public abstract void tick();
 	public abstract void render(Graphics g);
+	
+	public Tile createTile(int id, int x, int y){
+		switch(id){
+		case TileConstants.ID_GRASS:
+			return new GrassTile(x, y);
+		case TileConstants.ID_WATER:
+			return new WaterTile(x, y);
+		}
+		
+		return null;
+	}
 	
 	public void tickEntities(){
 		for(int i = 0; i < entities.size(); i++){
@@ -66,11 +81,7 @@ public abstract class Level {
 				
 				String[] args = line.split("/");
 				
-				switch(Integer.parseInt(args[1])){
-				case Tile.ID_GRASS:
-					tiles.add(new GrassTile(Integer.parseInt(args[2]), Integer.parseInt(args[3])));
-					break;
-				}
+				tiles.add(createTile(Integer.parseInt(args[1]), Integer.parseInt(args[2]), Integer.parseInt(args[3])));
 			}
 			
 			tileInput.close();
@@ -91,5 +102,29 @@ public abstract class Level {
 			System.out.println(levelFile.getAbsolutePath().toString());
 			System.out.println("File does not exist!");
 		}
+	}
+	
+	public double getCamX() {
+		return camX;
+	}
+
+	public void setCamX(double camX) {
+		this.camX = camX;
+	}
+
+	public double getCamY() {
+		return camY;
+	}
+
+	public void setCamY(double camY) {
+		this.camY = camY;
+	}
+
+	public LinkedList<Tile> getTiles(){
+		return tiles;
+	}
+	
+	public LinkedList<Entity> getEntities(){
+		return entities;
 	}
 }

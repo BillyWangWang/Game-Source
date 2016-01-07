@@ -5,10 +5,10 @@ import java.awt.Graphics;
 import billywangwang.main.Game;
 import billywangwang.main.tile.TileConstants;
 
-public class GrassTile extends Tile {
+public class WaterTile extends Tile {
 
-	public GrassTile(int xx, int yy) {
-		super(TileConstants.ID_GRASS, xx, yy);
+	public WaterTile(int xx, int yy) {
+		super(TileConstants.ID_WATER, xx, yy, true);
 	}
 
 	public void tick() {
@@ -16,6 +16,7 @@ public class GrassTile extends Tile {
 	}
 
 	public void render(Graphics g) {
-		g.drawImage(Game.resources.grass, x, y, null);
+		g.drawImage(Game.resources.water, x, y, null);
 	}
+
 }
