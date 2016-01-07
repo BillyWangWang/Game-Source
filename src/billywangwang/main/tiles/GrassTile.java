@@ -2,7 +2,7 @@ package billywangwang.main.tiles;
 
 import java.awt.Graphics;
 
-import billywangwang.main.Main;
+import billywangwang.main.Game;
 
 public class GrassTile extends Tile {
 
@@ -15,6 +15,6 @@ public class GrassTile extends Tile {
 	}
 
 	public void render(Graphics g) {
-		g.drawImage(Main.testImage, x, y, null);
+		g.drawImage(Game.resources.grass, x, y, null);
 	}
 }

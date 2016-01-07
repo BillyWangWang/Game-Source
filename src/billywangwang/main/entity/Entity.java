@@ -4,11 +4,11 @@ import java.awt.Graphics;
 
 public abstract class Entity {
 	
-	protected String id;
+	protected int id;
 	protected double x, y;
 	protected int width, height;
 	
-	public Entity(String id, double xx, double yy){
+	public Entity(int id, double xx, double yy){
 		this.id = id;
 		x = xx;
 		y = yy;
@@ -20,11 +20,11 @@ public abstract class Entity {
 	public abstract void tick();
 	public abstract void render(Graphics g);
 
-	public String getId() {
+	public int getId() {
 		return id;
 	}
 
-	public void setId(String id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 

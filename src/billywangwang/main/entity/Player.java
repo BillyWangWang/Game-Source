@@ -9,8 +9,8 @@ import billywangwang.main.input.KeyInput;
 
 public class Player extends Entity{
 	
-	public Player(String id, double xx, double yy){
-		super(id, xx, yy);
+	public Player(double xx, double yy){
+		super(EntityConstants.ID_PLAYER, xx, yy);
 	}
 	
 	public void tick(){
