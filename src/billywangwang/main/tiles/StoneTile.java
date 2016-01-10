@@ -5,11 +5,11 @@ import java.awt.Graphics;
 import billywangwang.main.Game;
 import billywangwang.main.tile.TileConstants;
 
-public class WaterTile extends Tile {
+public class StoneTile extends Tile {
 
 	//Constructor
-	public WaterTile(int xx, int yy) {
-		super(TileConstants.ID_WATER, xx, yy, true);
+	public StoneTile(int xx, int yy) {
+		super(TileConstants.ID_STONE, xx, yy);
 	}
 
 	public void tick() {
@@ -17,9 +17,9 @@ public class WaterTile extends Tile {
 		testShouldRender();
 	}
 
-	//Renders a water tile
+	//Renders a stone tile
 	public void render(Graphics g) {
-		g.drawImage(Game.resources.water, x, y, null);
+		g.drawImage(Game.resources.stone, x, y, null);
 	}
 
 }
