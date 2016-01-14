@@ -2,40 +2,43 @@ package billywangwang.main;
 
 import java.awt.Canvas;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.image.BufferStrategy;
-import java.awt.image.BufferedImage;
 
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
 import billywangwang.main.input.KeyInput;
-import billywangwang.main.level.Level;
-import billywangwang.main.level.TestLevel;
+import billywangwang.main.input.MouseInput;
+import billywangwang.main.state.MainMenuState;
+import billywangwang.main.state.State;
 
 @SuppressWarnings("serial")
 public class Game extends Canvas implements Runnable{
 	
 	//Final Variables
 	public static final String 	TITLE = "Player";
-	public static final int 		WIDTH = 1280, HEIGHT = 720;
+	public static final double 	WIDTH = 1280.0, HEIGHT = 720.0;
 	
 	//Static Variables
 	public static Resources 		resources;
+	public static Options			options;
+	public static State           state;
 	
-	public static BufferedImage 	testImage;
-	
-	public static Level           level;
+	public static JFrame			frame;
 	
 	//Private Variables
 	private Thread 				thread = new Thread(this, "Play Thread");
 	private boolean 				running = false;
+	
+	private Image					screenImage;
 
 	//Constructor
-	public Game(){
+	public Game(JFrame frame){
 		//Sets the UI Manager to look like Windows instead of default Java
+		Game.frame = frame;
+		
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (Exception e) {
@@ -43,21 +46,21 @@ public class Game extends Canvas implements Runnable{
 			System.exit(0);
 		}
 		
-		//Gets input from the user to determine which level to load
-		String levelName = JOptionPane.showInputDialog("Enter the level name - ");
-		
 		//Loads resources
 		resources = new Resources();
 		
-		//Sets the size of the canvas
-		Dimension size = new Dimension(WIDTH, HEIGHT);
-		setPreferredSize(size);
+		//Loads options
+		options = new Options();
 		
 		//Adds input capability from the user
 		addKeyListener(new KeyInput());
+		MouseInput mouseInput;
+		addMouseListener(mouseInput = new MouseInput());
+		addMouseMotionListener(mouseInput);
+		addMouseWheelListener(mouseInput);
 		
 		//Loads the level
-		level = new TestLevel(levelName);
+		state = new MainMenuState();
 	}
 	
 	//Starts the game
@@ -81,6 +84,8 @@ public class Game extends Canvas implements Runnable{
 	
 	//Renders and updates the game and logs the frames and ticks every second
 	public void run(){
+		//Create the game image so it can be stretched and manipulated
+		screenImage = createVolatileImage((int)WIDTH, (int)HEIGHT);		
 		//Timing to make sure we get 60 ticks
 		long last = System.nanoTime();
 		double ns = 1000000000.0 / 60.0;
@@ -121,14 +126,14 @@ public class Game extends Canvas implements Runnable{
 				timer += 1000;
 			}
 		}
-		//Stop the game if it isnt already stopped
+		//Stop the game if it isn't already stopped
 		stop();
 	}
 	
 	//Updates the game
 	private void tick(){
 		//Update the level
-		level.tick();
+		state.tick();
 	}
 	
 	//Renders the game
@@ -139,11 +144,13 @@ public class Game extends Canvas implements Runnable{
 			return;			
 		}
 		
-		Graphics g = bs.getDrawGraphics();
+		Graphics g = screenImage.getGraphics();
 		g.setColor(Color.BLACK);
-		g.fillRect(0, 0, WIDTH, HEIGHT);
+		g.fillRect(0, 0, (int)WIDTH, (int)HEIGHT);
 		//Renders the level
-		level.render(g);
+		state.render(g);
+		g = bs.getDrawGraphics();
+		g.drawImage(screenImage, 0, 0, getWidth(), getHeight(), null);
 		g.dispose();
 		bs.show();
 	}
@@ -154,12 +161,11 @@ public class Game extends Canvas implements Runnable{
 		JFrame frame = new JFrame(TITLE);
 		
 		//Creates a new game
-		Game game = new Game();
+		Game game = new Game(frame);
 		
 		//Variables of the frame
 		frame.setResizable(false);
 		frame.add(game);
-		frame.pack();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);

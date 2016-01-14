@@ -12,11 +12,6 @@ public class GrassTile extends Tile {
 		super(TileConstants.ID_GRASS, xx, yy);
 	}
 
-	public void tick() {
-		//Tests if this tile should be being drawn to screen
-		testShouldRender();
-	}
-
 	//Renders a grass tile
 	public void render(Graphics g) {
 		g.drawImage(Game.resources.grass, x, y, null);

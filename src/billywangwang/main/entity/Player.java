@@ -2,10 +2,11 @@ package billywangwang.main.entity;
 
 import java.awt.Graphics;
 import java.awt.Rectangle;
-import java.awt.event.KeyEvent;
 
 import billywangwang.main.Game;
+import billywangwang.main.Options;
 import billywangwang.main.input.KeyInput;
+import billywangwang.main.state.level.Level;
 import billywangwang.main.tiles.Tile;
 
 public class Player extends Entity {
@@ -29,19 +30,19 @@ public class Player extends Entity {
 
 	public void tick() {
 		//Updates the move dir and keys[] variable to move in a direction. Also checks for collisions
-		if (KeyInput.isKeyDown(KeyEvent.VK_W) && !keys[0] && moveDir == -1 && !isColliding(x, y - (height / 2))) {
+		if (KeyInput.isKeyDown(Options.KEY_MOVEUP) && !keys[0] && moveDir == -1 && !isColliding(x, y - (height / 2))) {
 			target = y - 32;
 			moveDir = 0;
 			keys[0] = true;
-		} else if (KeyInput.isKeyDown(KeyEvent.VK_A) && !keys[1] && moveDir == -1 && !isColliding(x - (width / 2), y)) {
+		} else if (KeyInput.isKeyDown(Options.KEY_MOVELEFT) && !keys[1] && moveDir == -1 && !isColliding(x - (width / 2), y)) {
 			target = x - 32;
 			moveDir = 3;
 			keys[1] = true;
-		} else if (KeyInput.isKeyDown(KeyEvent.VK_S) && !keys[2] && moveDir == -1 && !isColliding(x, y + height + (height / 2))) {
+		} else if (KeyInput.isKeyDown(Options.KEY_MOVEDOWN) && !keys[2] && moveDir == -1 && !isColliding(x, y + height + (height / 2))) {
 			target = y + 32;
 			moveDir = 2;
 			keys[2] = true;
-		} else if (KeyInput.isKeyDown(KeyEvent.VK_D) && !keys[3] && moveDir == -1 && !isColliding(x + width + (width / 2), y)) {
+		} else if (KeyInput.isKeyDown(Options.KEY_MOVERIGHT) && !keys[3] && moveDir == -1 && !isColliding(x + width + (width / 2), y)) {
 			target = x + 32;
 			moveDir = 1;
 			keys[3] = true;
@@ -49,16 +50,16 @@ public class Player extends Entity {
 
 		//Resets the keys[] variable if the key has been released
 		if (keys[0])
-			if (!KeyInput.isKeyDown(KeyEvent.VK_W))
+			if (!KeyInput.isKeyDown(Options.KEY_MOVEUP))
 				keys[0] = false;
 		if (keys[1])
-			if (!KeyInput.isKeyDown(KeyEvent.VK_A))
+			if (!KeyInput.isKeyDown(Options.KEY_MOVELEFT))
 				keys[1] = false;
 		if (keys[2])
-			if (!KeyInput.isKeyDown(KeyEvent.VK_S))
+			if (!KeyInput.isKeyDown(Options.KEY_MOVEDOWN))
 				keys[2] = false;
 		if (keys[3])
-			if (!KeyInput.isKeyDown(KeyEvent.VK_D))
+			if (!KeyInput.isKeyDown(Options.KEY_MOVERIGHT))
 				keys[3] = false;
 
 		//Every time walktimer goes over the walkinterval walk towards our current target point
@@ -72,7 +73,7 @@ public class Player extends Entity {
 						y -= MOVE_SPEED;
 					} else {
 						//If we want to keep going in that direction keep moving otherwise stop
-						if (KeyInput.isKeyDown(KeyEvent.VK_W) && !isColliding(x, y - (height / 2))) {
+						if (KeyInput.isKeyDown(Options.KEY_MOVEUP) && !isColliding(x, y - (height / 2))) {
 							target = y - 32;
 							moveDir = 0;
 						} else
@@ -83,7 +84,7 @@ public class Player extends Entity {
 					if (x != target) {
 						x += MOVE_SPEED;
 					} else {
-						if (KeyInput.isKeyDown(KeyEvent.VK_D) && !isColliding(x + width + (width / 2), y)) {
+						if (KeyInput.isKeyDown(Options.KEY_MOVERIGHT) && !isColliding(x + width + (width / 2), y)) {
 							target = x + 32;
 							moveDir = 1;
 						} else
@@ -94,7 +95,7 @@ public class Player extends Entity {
 					if (y != target) {
 						y += MOVE_SPEED;
 					} else {
-						if (KeyInput.isKeyDown(KeyEvent.VK_S) && !isColliding(x, y + height + (height / 2))) {
+						if (KeyInput.isKeyDown(Options.KEY_MOVEDOWN) && !isColliding(x, y + height + (height / 2))) {
 							target = y + 32;
 							moveDir = 2;
 						} else
@@ -105,7 +106,7 @@ public class Player extends Entity {
 					if (x != target) {
 						x -= MOVE_SPEED;
 					} else {
-						if (KeyInput.isKeyDown(KeyEvent.VK_A) && !isColliding(x - (width / 2), y)) {
+						if (KeyInput.isKeyDown(Options.KEY_MOVELEFT) && !isColliding(x - (width / 2), y)) {
 							target = x - 32;
 							moveDir = 3;
 						} else
@@ -124,8 +125,8 @@ public class Player extends Entity {
 		double camX = -(x - (Game.WIDTH / 2));
 		double camY = -(y - (Game.HEIGHT / 2));
 
-		Game.level.setCamX(camX);
-		Game.level.setCamY(camY);
+		((Level)Game.state).setCamX(camX);
+		((Level)Game.state).setCamY(camY);
 	}
 
 	//Draws the player at the current x and y
@@ -140,8 +141,8 @@ public class Player extends Entity {
 
 	//Checks if the tile at the x and y variable specified is collidable
 	public boolean isColliding(double x, double y) {
-		for (int i = 0; i < Game.level.getTiles().size(); i++) {
-			Tile t = Game.level.getTiles().get(i);
+		for (int i = 0; i < ((Level)Game.state).getTiles().size(); i++) {
+			Tile t = ((Level)Game.state).getTiles().get(i);
 
 			//If it is collidable return true
 			if (t.isCollidable() && t.getBounds().contains(x, y)) {

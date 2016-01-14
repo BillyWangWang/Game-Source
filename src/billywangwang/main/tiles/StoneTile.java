@@ -12,11 +12,6 @@ public class StoneTile extends Tile {
 		super(TileConstants.ID_STONE, xx, yy);
 	}
 
-	public void tick() {
-		//Tests if this tile should be being drawn to screen
-		testShouldRender();
-	}
-
 	//Renders a stone tile
 	public void render(Graphics g) {
 		g.drawImage(Game.resources.stone, x, y, null);

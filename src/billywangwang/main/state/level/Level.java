@@ -1,4 +1,4 @@
-package billywangwang.main.level;
+package billywangwang.main.state.level;
 
 import java.awt.Graphics;
 import java.io.File;
@@ -7,8 +7,10 @@ import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.Scanner;
 
+import billywangwang.main.Game;
 import billywangwang.main.entity.Entity;
 import billywangwang.main.entity.Player;
+import billywangwang.main.state.State;
 import billywangwang.main.tile.TileConstants;
 import billywangwang.main.tiles.DesertTile;
 import billywangwang.main.tiles.GrassTile;
@@ -16,23 +18,12 @@ import billywangwang.main.tiles.StoneTile;
 import billywangwang.main.tiles.Tile;
 import billywangwang.main.tiles.WaterTile;
 
-public abstract class Level {
+public abstract class Level extends State {
 	
-	protected LinkedList<Entity> 	entities = new LinkedList<Entity>();
+
 	protected LinkedList<Tile> 	tiles = new LinkedList<Tile>();
 	
 	protected double 				camX, camY;
-	
-	//Loads the level specified
-	public Level(String path){
-		try{
-			load(path);
-		}
-		catch(Exception e){
-			e.printStackTrace();
-			System.exit(0);
-		}
-	}
 	
 	//Default methods
 	public abstract void tick();
@@ -60,46 +51,41 @@ public abstract class Level {
 		return null;
 	}
 	
-	//Updates all the entities in the level
-	public void tickEntities(){
-		for(int i = 0; i < entities.size(); i++){
-			entities.get(i).tick();
-		}
-	}
-	
-	//Renders all the entities in the level
-	public void renderEntities(Graphics g){
-		for(int i = 0; i < entities.size(); i++){
-			entities.get(i).render(g);
-		}
-	}
-	
 	//Updates all the tiles in the level
 	public void tickTiles(){
 		for(int i = 0; i < tiles.size(); i++){
-			tiles.get(i).tick();
+			Tile t = tiles.get(i);
+			int x = (int)(t.getX() - -((Level)Game.state).getCamX());
+			int y = (int)(t.getY() - -((Level)Game.state).getCamY());
+			if(x < 0 - TileConstants.WIDTH || y < 0 - TileConstants.HEIGHT || x > Game.WIDTH || y > Game.HEIGHT){
+				t.setRender(false);
+			}
+			else{
+				t.setRender(true);
+			}
 		}
 	}
 	
 	//Renders all the tiles in the level
 	public void renderTiles(Graphics g){
 		for(int i = 0; i < tiles.size(); i++){
-			if(tiles.get(i).shouldRender()){
-				tiles.get(i).render(g);
+			Tile t = tiles.get(i);
+			if(t.shouldRender()){
+				t.render(g);
 			}
 		}
 	}
 	
 	//Loads the player x and y coordinate and all the tiles in the .tile and .spawn file from the .level file
-	private void load(String level) throws Exception{
+	protected void load(String level) throws Exception{
 		//Gets the level file from the relative location
 		Path currentRelativePath = Paths.get("");
-		File levelFile = new File(currentRelativePath.toAbsolutePath().toString() + "\\levels\\" + level + ".level");
+		File levelFile = new File(currentRelativePath.toAbsolutePath().toString() + "\\Data\\levels\\" + level + ".level");
 		
 		//If the level exists load the map
 		if(levelFile.exists()){
 			//Loads in the .tile file
-			Scanner tileInput = new Scanner(new File(currentRelativePath.toAbsolutePath().toString() + "\\levels\\" + level + "\\" + level + ".tile"));
+			Scanner tileInput = new Scanner(new File(currentRelativePath.toAbsolutePath().toString() + "\\Data\\levels\\" + level + "\\" + level + ".tile"));
 			
 			while(tileInput.hasNext()){
 				//Gets the id and the x and y coordinates of the tile on this line
@@ -116,7 +102,7 @@ public abstract class Level {
 			tileInput.close();
 			
 			//Loads the .spawn file
-			Scanner spawnInput = new Scanner(new File(currentRelativePath.toAbsolutePath().toString() + "\\levels\\" + level + "\\" + level + ".spawn"));
+			Scanner spawnInput = new Scanner(new File(currentRelativePath.toAbsolutePath().toString() + "\\Data\\levels\\" + level + "\\" + level + ".spawn"));
 			
 			while(spawnInput.hasNext()){
 				//Gets the x and y coordinate of the player

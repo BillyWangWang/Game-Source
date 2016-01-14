@@ -1,13 +1,25 @@
-package billywangwang.main.level;
+package billywangwang.main.state.level;
 
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 
-public class TestLevel extends Level {
+import javax.swing.JOptionPane;
 
+public class TestLevel extends Level {
+	
 	//Constructor
-	public TestLevel(String level) {
-		super(level);
+	public TestLevel() {
+		super();
+		
+		String levelName = JOptionPane.showInputDialog("Enter a level name - ");
+		
+		try{
+			load(levelName);
+		}
+		catch(Exception e){
+			e.printStackTrace();
+			System.exit(0);
+		}
 	}
 	
 	public void tick(){

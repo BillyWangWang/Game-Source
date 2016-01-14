@@ -12,11 +12,6 @@ public class WaterTile extends Tile {
 		super(TileConstants.ID_WATER, xx, yy, true);
 	}
 
-	public void tick() {
-		//Tests if this tile should be being drawn to screen
-		testShouldRender();
-	}
-
 	//Renders a water tile
 	public void render(Graphics g) {
 		g.drawImage(Game.resources.water, x, y, null);
